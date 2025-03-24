@@ -1,20 +1,23 @@
-# Nginx Vite TypeScript Express Template
+# Real-time Global Chat
 
+![WebSocket](https://img.shields.io/badge/websocket-%2300C7B7.svg?style=for-the-badge&logo=websocket&logoColor=white)
 ![Nginx](https://img.shields.io/badge/nginx-%23009639.svg?style=for-the-badge&logo=nginx&logoColor=white)
 ![Vite](https://img.shields.io/badge/vite-%2300C7B7.svg?style=for-the-badge&logo=vite&logoColor=white)
 ![TypeScript](https://img.shields.io/badge/typescript-%23007ACC.svg?style=for-the-badge&logo=typescript&logoColor=white)
-![Express](https://img.shields.io/badge/express-%23000000.svg?style=for-the-badge&logo=express&logoColor=white)
-![Docker](https://img.shields.io/badge/docker-%232496ED.svg?style=for-the-badge&logo=docker&logoColor=white)
 
-This template provides a starting point for building a web application using Nginx as a reverse proxy, Vite for frontend tooling, TypeScript for type-safe JavaScript, Express for the backend server, and Docker for containerization.
+## About This Project
 
-## Features
+This project is a real-time global chat application built with Nginx, Vite, TypeScripte, Websocket, and Docker for containerization.
 
-- **Hot Reload for Development**: Automatically reloads the frontend and server when code changes are detected.
-- **Logging**: Integrated logging for both frontend and backend to monitor and debug applications.
-- **Multi Environment Docker Configurations**: Separate configurations for development and production environments.
-- **Makefile Commands**: Simplifies common tasks such as building and running Docker containers.
-- **Faster Docker Builds**: Optimized Dockerfiles for quicker build times.
+### Features
+
+- **Real-Time Communication**: Enables users to chat in real-time using WebSocket.
+- **Hot Reload for Development**: Automatically reloads the frontend and backend during development.
+- **Integrated Logging**: Provides logging for both frontend and backend to simplify debugging.
+- **Multi-Environment Docker Support**: Separate Docker configurations for development and production.
+- **Makefile Commands**: Simplifies Docker-related tasks with predefined commands.
+- **Optimized Docker Builds**: Faster build times with optimized Dockerfiles.
+- **Scalable Architecture**: Designed to handle multiple users with ease.
 
 ## Getting Started 🚀
 
@@ -51,7 +54,7 @@ This template provides a starting point for building a web application using Ngi
    yarn dev
    ```
 
-2. Start the express server by runnning the following command inside `/backend` :
+2. Start the websocket server by runnning the following command inside `/backend` :
 
    ```sh
    npm run dev
@@ -60,7 +63,7 @@ This template provides a starting point for building a web application using Ngi
 
    ```
 
-3. Open your browser and navigate to `http://localhost:5173` to view your react application and `http://localhost:5000` to test your API.
+3. Open your browser and navigate to `http://localhost:5173` to view the chat application.
 
 ## Docker 🐳
 
@@ -74,7 +77,7 @@ If you prefer docker for development or production with nginx, follow these step
    docker compose build
    ```
 
-   This command uses `docker-compose.override.yml` to build development images of `nginx`, `app`, and `server` with hot reload. You can change the image configuration inside `Dockerfile.dev`.
+   This command uses `docker-compose.override.yml` to build development images of `nginx`, `app`, and `websocket` with hot reload. You can change the image configuration inside `Dockerfile.dev`.
 
 2. Run the images in containers.
 
@@ -105,7 +108,7 @@ If you prefer docker for development or production with nginx, follow these step
 ## Project Structure 📁
 
 - `frontend/`: Source code for the frontend (Vite/TypeScript).
-- `backend/`: Source code for the backend (Express).
+- `backend/`: Source code for the backend (websocket server).
 - `nginx/`: Nginx configuration files.
 - `Dockerfile`: Docker configuration for containerized production deployment.
 - `Dockerfile.dev`: Docker configuration for containerized development.

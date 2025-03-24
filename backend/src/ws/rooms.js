@@ -1,13 +1,12 @@
-const rooms = new Map(); // Room storage (roomName -> Set of clients)
+const rooms = new Map();
 
 function handleRoom(ws, message) {
-  const data = JSON.parse(message); // Parse the JSON string into an object
+  const data = JSON.parse(message);
   console.log(`📩 Received: ${message.toString()}`);
 
   if (data.type === "join") {
     if (!rooms.has(data.room)) rooms.set(data.room, new Set());
-    // Remove the user from any existing
-    //  room before adding to new one
+
     removeClient(ws);
 
     rooms.get(data.room).add(ws);
@@ -15,7 +14,6 @@ function handleRoom(ws, message) {
     ws.username = data.username;
     console.log(`👤 ${data.username} joined room: ${ws.room}`);
 
-    // Notify room members of updated user count
     broadcastUserCount(data.room);
   }
 
@@ -36,10 +34,8 @@ function removeClient(ws) {
     rooms.get(ws.room).delete(ws);
     console.log(`❌ ${ws.username} left room: ${ws.room}`);
 
-    // Notify room members of updated user count
     broadcastUserCount(ws.room);
 
-    // Remove empty rooms
     if (rooms.get(ws.room).size === 0) {
       rooms.delete(ws.room);
     }
