@@ -5,6 +5,7 @@ import { createContext, useContext, useEffect, useState } from "react";
 interface ThemeContextType {
   theme: string;
   toggleTheme: () => void;
+  getCurrentTheme: () => string; // Add a function to get the current theme
 }
 
 const ThemeContext = createContext<ThemeContextType | undefined>(undefined);
@@ -41,8 +42,10 @@ export function ThemeProvider({ children }: { children: React.ReactNode }) {
     }
   };
 
+  const getCurrentTheme = () => theme; // Function to return the current theme
+
   return (
-    <ThemeContext.Provider value={{ theme, toggleTheme }}>
+    <ThemeContext.Provider value={{ theme, toggleTheme, getCurrentTheme }}>
       {children}
     </ThemeContext.Provider>
   );

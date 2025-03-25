@@ -3,14 +3,14 @@ import { Server } from "../types";
 
 interface SidebarProps {
   servers: Server[];
-  currentServer: Server;
-  onServerChange: (server: Server) => void;
+  currentRoom: Server | null;
+  onRoomChange: (server: Server) => void;
 }
 
 const Sidebar: React.FC<SidebarProps> = ({
   servers,
-  currentServer,
-  onServerChange,
+  currentRoom,
+  onRoomChange,
 }) => {
   return (
     <div className="w-64 bg-gray-900 text-white p-4">
@@ -19,9 +19,9 @@ const Sidebar: React.FC<SidebarProps> = ({
         {servers.map((server) => (
           <li
             key={server.id}
-            onClick={() => onServerChange(server)}
+            onClick={() => onRoomChange(server)}
             className={`p-2 cursor-pointer rounded ${
-              currentServer.id === server.id ? "bg-gray-700" : ""
+              currentRoom?.id === server.id ? "bg-gray-700" : ""
             }`}
           >
             {server.icon} {server.name}

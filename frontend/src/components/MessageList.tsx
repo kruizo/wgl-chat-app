@@ -6,20 +6,19 @@ interface MessageListProps {
   username: string;
 }
 
-const MessageList: React.FC<MessageListProps> = ({ messages, username }) => {
+const MessageList: React.FC<MessageListProps> = ({ messages }) => {
   return (
     <div className="flex-1 p-4 overflow-y-auto bg-gray-100 dark:bg-gray-950">
-      {messages.map((msg, index) => (
-        <>
+      {messages.map((msg) => (
+        <div key={msg.id} className="space-y-1">
           <div
-            key={index}
             className={`p-2 space-x-4 rounded-md dark:text-gray-300 text-black`}
           >
             <strong className="font-bold ">{msg.sender}</strong>
             <span className="text-sm">{msg.timestamp}</span>
           </div>
           <p className="pl-2 dark:text-gray-200 text-black">{msg.content}</p>
-        </>
+        </div>
       ))}
     </div>
   );

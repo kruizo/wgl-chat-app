@@ -3,6 +3,7 @@ export interface Server {
   name: string;
   icon: string;
   color: string;
+  userCount: number;
 }
 
 export interface Message {

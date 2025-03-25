@@ -1,56 +1,85 @@
 const rooms = new Map();
+const wsData = new Map();
+const broadcastQueue = new Map();
 
-function handleRoom(ws, message) {
-  const data = JSON.parse(message);
-  console.log(`📩 Received: ${message.toString()}`);
+function handleRoom(ws, data) {
+  console.log(`📩 Received: ${data.toString()}`);
 
-  if (data.type === "join") {
-    if (!rooms.has(data.room)) rooms.set(data.room, new Set());
+  if (!rooms.has(data.room)) rooms.set(data.room, new Set());
 
-    removeClient(ws);
+  removeClient(ws);
 
-    rooms.get(data.room).add(ws);
-    ws.room = data.room;
-    ws.username = data.username;
-    console.log(`👤 ${data.username} joined room: ${ws.room}`);
+  const roomSet = rooms.get(data.room);
+
+  if (!roomSet.has(ws)) {
+    roomSet.add(ws);
+    wsData.set(ws, { room: data.room, username: data.username });
+    console.log(`👤 ${data.username} joined room: ${data.room}`);
+
+    broadcastEventInRoom(data.room, {
+      type: "join",
+      username: data.username,
+      room: data.room,
+    });
 
     broadcastUserCount(data.room);
   }
-
-  if (data.type === "message") {
-    if (rooms.has(data.room)) {
-      rooms.get(data.room).forEach((client) => {
-        if (client.readyState === 1) {
-          client.send(JSON.stringify(data));
-          console.log(`📤 ${data.sender} sent message to room: ${data.room}`);
-        }
-      });
-    }
-  }
 }
 
+// ✅ Handle Message Broadcasting
+function handleMessage(data) {
+  broadcastEventInRoom(data.room, data);
+}
+
+// ✅ Remove Client from Room
 function removeClient(ws) {
-  if (ws.room && rooms.has(ws.room)) {
-    rooms.get(ws.room).delete(ws);
-    console.log(`❌ ${ws.username} left room: ${ws.room}`);
+  const clientData = wsData.get(ws);
 
-    broadcastUserCount(ws.room);
+  if (clientData && clientData.room && rooms.has(clientData.room)) {
+    const roomSet = rooms.get(clientData.room);
+    roomSet.delete(ws);
+    console.log(`❌ ${clientData.username} left room: ${clientData.room}`);
 
-    if (rooms.get(ws.room).size === 0) {
-      rooms.delete(ws.room);
+    // Broadcast leave event
+    broadcastEventInRoom(clientData.room, {
+      type: "leave",
+      username: clientData.username,
+      room: clientData.room,
+    });
+
+    broadcastUserCount(clientData.room);
+
+    if (roomSet.size === 0) {
+      rooms.delete(clientData.room);
     }
   }
+
+  wsData.delete(ws);
 }
 
 function broadcastUserCount(room) {
-  if (rooms.has(room)) {
-    const count = rooms.get(room).size;
-    rooms.get(room).forEach((client) => {
-      if (client.readyState === 1) {
-        client.send(JSON.stringify({ type: "user_count", room, count }));
-      }
-    });
+  if (broadcastQueue.has(room)) {
+    clearTimeout(broadcastQueue.get(room));
   }
+
+  broadcastQueue.set(
+    room,
+    setTimeout(() => {
+      if (rooms.has(room)) {
+        const count = rooms.get(room).size;
+        rooms.get(room).forEach((client) => {
+          if (client.readyState === 1) {
+            client.send(JSON.stringify({ type: "user_count", room, count }));
+          }
+        });
+      }
+      broadcastQueue.delete(room);
+    }, 100)
+  );
 }
 
-module.exports = { handleRoom, removeClient };
+module.exports = {
+  handleRoom,
+  removeClient,
+  handleMessage,
+};

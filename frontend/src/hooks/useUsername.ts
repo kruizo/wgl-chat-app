@@ -4,7 +4,7 @@ const STORAGE_KEY = "chat_username";
 const EXPIRATION_HOURS = 24;
 
 export function useUsername() {
-  const [username, setUsername] = useState<string | null>(null);
+  const [username, setUsername] = useState<string>("");
 
   useEffect(() => {
     const storedData = localStorage.getItem(STORAGE_KEY);

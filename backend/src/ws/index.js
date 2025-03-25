@@ -1,17 +1,21 @@
 const { WebSocketServer } = require("ws");
 const { createServer } = require("http");
-const { handleRoom, removeClient, getRooms } = require("./rooms");
+// const { handleRoom, removeClient, handleMessage } = require("./rooms");
+const { handleSocketEvent, handleClientLeave } = require("./handler.ts");
 
 const server = createServer();
 const wss = new WebSocketServer({ server });
 
 wss.on("connection", (ws, req) => {
   console.log("✅ Client connected to WebSocket server");
+
   ws.on("message", (msg) => {
-    handleRoom(ws, msg.toString());
+    console.log("Received from WS client: ", msg.toString());
+
+    handleSocketEvent(ws, msg);
   });
 
-  ws.on("close", () => removeClient(ws));
+  ws.on("close", () => handleClientLeave(ws));
 });
 
 const PORT = process.env.WS_PORT || 5001;
