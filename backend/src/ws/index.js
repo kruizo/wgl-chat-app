@@ -10,8 +10,6 @@ wss.on("connection", (ws, req) => {
   console.log("✅ Client connected to WebSocket server");
 
   ws.on("message", (msg) => {
-    console.log("Received from WS client: ", msg.toString());
-
     handleSocketEvent(ws, msg);
   });
 

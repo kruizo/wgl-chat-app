@@ -1,39 +1,57 @@
 import React from "react";
 import { useTheme } from "@/context/ThemeProvider";
+import { Menu, Moon, Sun } from "lucide-react";
+import { Badge } from "@/components/ui/badge";
+import { Button } from "@/components/ui/button";
+import type { Server } from "@/types";
 
 interface HeaderProps {
-  currentRoomName: string | undefined;
+  currentRoom?: Server | null;
   userCount: number;
   toggleMobileMenu: () => void;
 }
 
 const Header: React.FC<HeaderProps> = ({
-  currentRoomName,
+  currentRoom,
   userCount,
   toggleMobileMenu,
 }) => {
   const { getCurrentTheme, toggleTheme } = useTheme();
+  const isDark = getCurrentTheme() === "dark";
 
   return (
-    <header className="p-4 dark:text-white text-black dark:bg-slate-900 flex justify-between items-center">
-      <h1 className="text-primary">{currentRoomName}</h1>
-      <div className="flex items-center gap-4">
-        <div className="bg-secondary px-3 py-1 rounded">
-          Users Online: {userCount}
-        </div>
-        <button
-          onClick={toggleTheme}
-          className="px-3 py-1 rounded bg-primary text-black dark:text-white"
+    <div className="border-b border-border p-4 flex items-center justify-between bg-card  text-card-foreground">
+      <div className="flex items-center gap-3">
+        <Button
+          variant="ghost"
+          size="icon"
+          className="md:hidden"
+          onClick={toggleMobileMenu}
         >
-          {getCurrentTheme()?.charAt(0).toUpperCase() +
-            getCurrentTheme()?.slice(1)}{" "}
-          Mode
-        </button>
-        <button className="md:hidden" onClick={toggleMobileMenu}>
-          ☰
-        </button>
+          <Menu className="h-5 w-5" />
+        </Button>
+        <div className="flex items-center gap-2">
+          <h1 className="font-bold text-lg">
+            @ {currentRoom?.name || "Select a room"}
+          </h1>
+        </div>
       </div>
-    </header>
+
+      <div className="flex items-center gap-3">
+        <Badge variant="outline" className="bg-primary/10 ">
+          <div className="text-foreground">{userCount} users online</div>
+        </Badge>
+
+        <Button
+          variant="ghost"
+          size="icon"
+          onClick={toggleTheme}
+          className="rounded-full text-accent-foreground"
+        >
+          {isDark ? <Moon className="h-5 w-5" /> : <Sun className="h-5 w-5" />}
+        </Button>
+      </div>
+    </div>
   );
 };
 

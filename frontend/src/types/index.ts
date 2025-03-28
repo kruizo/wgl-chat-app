@@ -12,4 +12,5 @@ export interface Message {
   sender: string;
   timestamp: string;
   avatar?: string;
+  sessionId?: string;
 }

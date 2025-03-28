@@ -1,6 +1,7 @@
 // const { handleRoom, removeClient, handleMessage } = require("./rooms");
 const rooms = new Map();
 const wsData = new Map();
+const sessionMap = new Map(); // sessionId -> ws
 const broadcastQueue = new Map();
 
 const handleSocketEvent = (ws, event) => {
@@ -39,13 +40,26 @@ const handleSocketEvent = (ws, event) => {
 function handleClientJoin(ws, message) {
   if (!rooms.has(message.room)) rooms.set(message.room, new Set());
 
+  if (message.sessionId && sessionMap.has(message.sessionId)) {
+    console.log(`🔁 Duplicate session. Closing previous connection.`);
+    const existingWs = sessionMap.get(message.sessionId);
+    if (existingWs && existingWs !== ws) {
+      existingWs.close();
+    }
+  }
+
   handleClientLeave(ws);
 
   const roomSet = rooms.get(message.room);
 
   if (!roomSet.has(ws)) {
     roomSet.add(ws);
-    wsData.set(ws, { room: message.room, username: message.username });
+    wsData.set(ws, {
+      room: message.room,
+      username: message.username,
+      sessionId: message.sessionId,
+    });
+    sessionMap.set(message.sessionId, ws);
     console.log(`👤 ${message.username} joined room: ${message.room}`);
 
     broadcastEventInRoom(
@@ -95,8 +109,6 @@ function handleClientLeave(ws) {
   wsData.delete(ws);
 }
 function broadcastEventInRoom(room, event, includeCount = false) {
-  console.log("LOG:", room, rooms.has(room), rooms);
-
   if (rooms.has(room)) {
     const roomSet = rooms.get(room);
 

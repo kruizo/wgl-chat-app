@@ -2,8 +2,11 @@ const express = require("express");
 const router = express.Router();
 
 const roomData = [
-  { id: "1", name: "General", icon: "G", color: "#292CFF" },
-  { id: "2", name: "Gaming", icon: "G", color: "#A805FF" },
+  { id: "1", name: "Gaming", icon: "🎮" },
+  { id: "2", name: "Technology", icon: "💻" },
+  { id: "3", name: "Music", icon: "🎵" },
+  { id: "4", name: "Movies", icon: "🎬" },
+  { id: "5", name: "Books", icon: "📚" },
 ];
 
 router.get("/", (req, res) => {
